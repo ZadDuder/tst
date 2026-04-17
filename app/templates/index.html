@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Загрузка отчётов{% endblock %}
+
+{% block content %}
+    <h2>Загрузка отчётов электронной очереди</h2>
+
+    {% if error_message %}
+        <div class="error-box">
+            {{ error_message }}
+        </div>
+    {% endif %}
+
+    <form action="/process" method="post" enctype="multipart/form-data">
+        <div class="form-block">
+            <label for="report_1">Отчёт 1</label>
+            <input type="file" id="report_1" name="report_1" required>
+        </div>
+
+        <div class="form-block">
+            <label for="report_2">Отчёт 2</label>
+            <input type="file" id="report_2" name="report_2" required>
+        </div>
+
+        <div class="form-block">
+            <label for="report_3">Отчёт 3</label>
+            <input type="file" id="report_3" name="report_3" required>
+        </div>
+
+        <div class="form-block">
+            <label for="report_4">Отчёт 4</label>
+            <input type="file" id="report_4" name="report_4" required>
+        </div>
+
+        <h3>Настройки категорий</h3>
+
+        <div class="form-block">
+            <label for="a_threshold">Порог для категории A (в секундах)</label>
+            <input type="number" id="a_threshold" name="a_threshold" value="300" min="1" required>
+        </div>
+
+        <div class="form-block">
+            <label for="b_threshold">Порог для категории B (в секундах)</label>
+            <input type="number" id="b_threshold" name="b_threshold" value="600" min="1" required>
+        </div>
+
+        <button type="submit">Обработать</button>
+    </form>
+{% endblock %}

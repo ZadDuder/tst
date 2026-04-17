@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Результат обработки{% endblock %}
+
+{% block content %}
+    <div class="success-box">
+        <h2>Обработка завершена</h2>
+        <p>Файлы успешно загружены, объединены и агрегированы.</p>
+        <p><strong>Job ID:</strong> {{ job_id }}</p>
+    </div>
+
+    <div class="summary-grid">
+        <div class="summary-card">
+            <div class="summary-label">Файлов обработано</div>
+            <div class="summary-value">{{ quality_report["files_processed"] }}</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-label">Строк после объединения</div>
+            <div class="summary-value">{{ merged_rows }}</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-label">Строк в итоговой сводке</div>
+            <div class="summary-value">{{ summary_rows }}</div>
+        </div>
+    </div>
+
+    <h3>Пороговые значения</h3>
+    <ul>
+        <li>A: до {{ a_threshold }} сек</li>
+        <li>B: до {{ b_threshold }} сек</li>
+        <li>C: больше {{ b_threshold }} сек</li>
+    </ul>
+
+    <h3>Загруженные файлы</h3>
+    <ul>
+        {% for file_name in uploaded_files %}
+            <li>{{ file_name }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Файлы результата</h3>
+    <div class="download-buttons">
+        <a class="btn" href="/download/{{ job_id }}/csv">Скачать CSV</a>
+        <a class="btn" href="/download/{{ job_id }}/xlsx">Скачать XLSX</a>
+        <a class="btn btn-secondary" href="/download/{{ job_id }}/quality">Скачать Quality Report</a>
+    </div>
+
+    <h3>Предпросмотр итоговой таблицы</h3>
+
+    {% if preview_rows %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Сотрудник</th>
+                        <th>Тип операции</th>
+                        <th>Кол-во клиентов</th>
+                        <th>Мин. время (сек)</th>
+                        <th>Макс. время (сек)</th>
+                        <th>Среднее время (сек)</th>
+                        <th>Категория</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in preview_rows %}
+                        <tr>
+                            <td>{{ row["employee"] }}</td>
+                            <td>{{ row["operation_type"] }}</td>
+                            <td>{{ row["clients_count"] }}</td>
+                            <td>{{ row["min_time_sec"] }}</td>
+                            <td>{{ row["max_time_sec"] }}</td>
+                            <td>{{ row["avg_time_sec"] }}</td>
+                            <td>{{ row["category"] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>Нет данных для отображения.</p>
+    {% endif %}
+
+    <details class="details-block">
+        <summary>Нормализация и качество данных</summary>
+
+        <p><strong>Путь к quality report:</strong> {{ quality_report_path }}</p>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Файл</th>
+                        <th>Исходных строк</th>
+                        <th>После нормализации</th>
+                        <th>Отброшено из-за битой даты</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in quality_report["files"] %}
+                        <tr>
+                            <td>{{ item["file_name"] }}</td>
+                            <td>{{ item["initial_rows"] }}</td>
+                            <td>{{ item["rows_after_normalization"] }}</td>
+                            <td>{{ item["dropped_invalid_dates"] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </details>
+
+    <p style="margin-top: 24px;">
+        <a href="/">← Вернуться назад</a>
+    </p>
+{% endblock %}
